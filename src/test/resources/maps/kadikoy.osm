@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.10 (2516812 spike-08.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <bounds minlat="40.9895900" minlon="29.0223800" maxlat="40.9915700" maxlon="29.0260800"/>
+ <node id="27611143" visible="true" version="9" changeset="72764952" timestamp="2019-07-29T11:04:59Z" user="Oguzhaner" uid="9023585" lat="40.9927552" lon="29.0235301">
+  <tag k="source" v="PGS"/>
+ </node>
+ <way id="25549908" visible="true" version="22" changeset="121967246" timestamp="2022-06-05T09:23:14Z" user="marciest" uid="9536138">
+  <nd ref="278471380"/>
+  <nd ref="6959248754"/>
+  <nd ref="2444425894"/>
+  <nd ref="6959248745"/>
+  <nd ref="8844820758"/>
+  <nd ref="6959248746"/>
+  <nd ref="6959248747"/>
+  <nd ref="1691315171"/>
+  <tag k="highway" v="primary"/>
+  <tag k="lanes" v="3"/>
+  <tag k="name" v="Rıhtım Caddesi"/>
+  <tag k="oneway" v="yes"/>
+  <tag k="surface" v="asphalt"/>
+ </way>
+ <relation id="17059267" visible="true" version="2" changeset="146648882" timestamp="2024-01-24T21:48:39Z" user="tg4567" uid="12500589">
+  <member type="relation" ref="17059266" role=""/>
+  <member type="relation" ref="17059265" role=""/>
+  <member type="node" ref="11536539772" role="stop"/>
+  <tag k="name" v="Bus 15YK"/>
+  <tag k="network" v="İETT"/>
+  <tag k="official_name" v="Yenimahalle - Kadıköy"/>
+  <tag k="operator" v="İETT"/>
+  <tag k="public_transport:version" v="2"/>
+  <tag k="ref" v="15YK"/>
+  <tag k="route_master" v="bus"/>
+  <tag k="type" v="route_master"/>
+  <tag k="website" v="https://iett.istanbul/RouteDetail?hkod=15YK"/>
+ </relation>
+</osm>
