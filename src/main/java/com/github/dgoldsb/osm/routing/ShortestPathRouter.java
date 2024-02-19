@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class ShortestPathRouter {
-  public Iterable<Vertex> findShortestPath(Graph graph, Vertex start, Vertex end)
+  public List<Vertex> findShortestPath(Graph graph, Vertex start, Vertex end)
       throws RuntimeException {
     PriorityQueue<DistanceNodePair> queue = new PriorityQueue<>();
     HashMap<Vertex, Double> bestDistanceMap = new HashMap<>();
@@ -44,8 +44,7 @@ public class ShortestPathRouter {
     throw new RuntimeException("No path found!");
   }
 
-  private Iterable<Vertex> reconstructPath(
-      HashMap<Vertex, Vertex> shortestNeighboursMap, Vertex end) {
+  private List<Vertex> reconstructPath(HashMap<Vertex, Vertex> shortestNeighboursMap, Vertex end) {
     List<Vertex> path = new ArrayList<>(List.of(end));
 
     while (shortestNeighboursMap.containsKey(path.getLast())) {
