@@ -22,7 +22,7 @@ public record Graph(
         osm.getNodes().stream()
             .collect(
                 Collectors.toMap(
-                    Node::getUid,
+                    Node::getId,
                     n -> new Vertex(n.getUid(), n.getLatitude(), n.getLongitude()),
                     (existingValue, newValue) -> existingValue,
                     HashMap::new));
@@ -44,13 +44,19 @@ public record Graph(
     // ways.
     HashMap<Vertex, String> labelMap = new HashMap<>();
     for (Way way : osm.getWays()) {
+      if (way.getTags() == null) {
+        continue;
+      }
+
       Optional<Tag> labelTagOptional =
           way.getTags().stream().filter(t -> Objects.equals(t.getK(), "name")).findFirst();
 
       if (labelTagOptional.isPresent()) {
         for (Nd nd : way.getNds()) {
           Vertex vertex = uidVertexMap.get(nd.getRef());
-          labelMap.put(vertex, labelTagOptional.get().getV());
+          if (vertex != null) {
+            labelMap.put(vertex, labelTagOptional.get().getV());
+          }
         }
       }
     }
@@ -60,7 +66,7 @@ public record Graph(
 
   public Vertex findVertex(Long uid) throws RuntimeException {
     if (!this.uidVertexMap.containsKey(uid)) {
-      throw new RuntimeException("UID not known in map!");
+      throw new RuntimeException(String.format("UID %d not known in map!", uid));
     }
     return this.uidVertexMap.get(uid);
   }

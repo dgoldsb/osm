@@ -16,12 +16,6 @@ public class Main {
     // God I last used scanner in university haha.
     Scanner scanner = new Scanner(System.in);
 
-    // Request for input to the routin algorithm.
-    System.out.print("Enter start node UID: ");
-    Long startNodeUid = Long.valueOf(scanner.nextLine());
-    System.out.print("Enter end node UID: ");
-    Long endNodeUid = Long.valueOf(scanner.nextLine());
-
     // Parse the OSM file.
     // TODO: Map selection (or something).
     File xmlFile = new File("src/main/resources/maps/test.osm");
@@ -31,6 +25,12 @@ public class Main {
 
     // Parse the graph from the OSM.
     Graph graph = Graph.fromOsm(osm);
+
+    // Request for input to the routin algorithm.
+    System.out.print("Enter start node UID: ");
+    Long startNodeUid = Long.valueOf(scanner.nextLine());
+    System.out.print("Enter end node UID: ");
+    Long endNodeUid = Long.valueOf(scanner.nextLine());
 
     // Run the router.
     ShortestPathRouter router = new ShortestPathRouter();
