@@ -5,8 +5,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.List;
 
 public class Node {
-  private final int RADIUS_OF_EARTH = 6378100;
-
   @JacksonXmlProperty(isAttribute = true)
   private Long id;
 
@@ -37,34 +35,6 @@ public class Node {
 
   @JacksonXmlProperty(isAttribute = true)
   private String version;
-
-  /**
-   * Returns the distance between this node and the other in meters.
-   *
-   * @param other other node to compare distance to
-   * @return distance in meters
-   */
-  public Double calculateDistanceToNode(Node other) {
-    // Convert latitude and longitude from degrees to radians.
-    double thisLatitudeRadians = Math.toRadians(this.latitude);
-    double thisLongitudeRadians = Math.toRadians(this.longitude);
-    double otherLatitudeRadians = Math.toRadians(other.latitude);
-    double otherLongitudeRadians = Math.toRadians(other.longitude);
-
-    // Calculate the differences between latitudes and longitudes.
-    double deltaLatitude = otherLatitudeRadians - thisLatitudeRadians;
-    double deltaLongitude = otherLongitudeRadians - thisLongitudeRadians;
-
-    // Haversine formula.
-    double a =
-        Math.pow(Math.sin(deltaLatitude / 2), 2)
-            + Math.cos(thisLatitudeRadians)
-                * Math.cos(otherLatitudeRadians)
-                * Math.pow(Math.sin(deltaLongitude / 2), 2);
-    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return RADIUS_OF_EARTH * c;
-  }
 
   public Long getId() {
     return id;
