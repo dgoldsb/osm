@@ -23,7 +23,7 @@ public record Graph(
             .collect(
                 Collectors.toMap(
                     Node::getId,
-                    n -> new Vertex(n.getUid(), n.getLatitude(), n.getLongitude()),
+                    n -> new Vertex(n.getId(), n.getLatitude(), n.getLongitude()),
                     (existingValue, newValue) -> existingValue,
                     HashMap::new));
 
@@ -34,14 +34,16 @@ public record Graph(
         Vertex firstVertex = uidVertexMap.get(way.getNds().get(i).getRef());
         Vertex secondVertex = uidVertexMap.get(way.getNds().get(i + 1).getRef());
 
-        neighbourMap.getOrDefault(firstVertex, new HashSet<>()).add(secondVertex);
-        neighbourMap.getOrDefault(secondVertex, new HashSet<>()).add(firstVertex);
+        neighbourMap.putIfAbsent(firstVertex, new HashSet<>());
+        neighbourMap.putIfAbsent(secondVertex, new HashSet<>());
+
+        neighbourMap.get(firstVertex).add(secondVertex);
+        neighbourMap.get(secondVertex).add(firstVertex);
       }
     }
 
     // Quick and dirty extraction of names of ways, we do not consider the edge case of nodes that
-    // are in multiple
-    // ways.
+    // are in multiple ways.
     HashMap<Vertex, String> labelMap = new HashMap<>();
     for (Way way : osm.getWays()) {
       if (way.getTags() == null) {
@@ -64,10 +66,10 @@ public record Graph(
     return new Graph(uidVertexMap, neighbourMap, labelMap);
   }
 
-  public Vertex findVertex(Long uid) throws RuntimeException {
-    if (!this.uidVertexMap.containsKey(uid)) {
-      throw new RuntimeException(String.format("UID %d not known in map!", uid));
+  public Vertex findVertex(Long id) throws RuntimeException {
+    if (!this.uidVertexMap.containsKey(id)) {
+      throw new RuntimeException(String.format("UID %d not known in map!", id));
     }
-    return this.uidVertexMap.get(uid);
+    return this.uidVertexMap.get(id);
   }
 }
