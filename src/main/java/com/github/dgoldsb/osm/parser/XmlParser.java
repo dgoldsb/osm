@@ -8,7 +8,6 @@ public class XmlParser {
   private final XmlMapper xmlMapper;
 
   public XmlParser(XmlMapper xmlMapper) {
-    // xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     this.xmlMapper = xmlMapper;
   }
 
