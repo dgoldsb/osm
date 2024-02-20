@@ -68,8 +68,15 @@ public record Graph(
 
   public Vertex findVertex(Long id) throws RuntimeException {
     if (!this.uidVertexMap.containsKey(id)) {
-      throw new RuntimeException(String.format("UID %d not known in map!", id));
+      throw new RuntimeException(String.format("ID %d not known in map!", id));
     }
     return this.uidVertexMap.get(id);
+  }
+
+  public String findLabel(Vertex vertex) throws RuntimeException {
+    if (!this.labelMap.containsKey(vertex)) {
+      throw new RuntimeException(String.format("Vertex %s not known in map!", vertex));
+    }
+    return this.labelMap.get(vertex);
   }
 }

@@ -38,6 +38,24 @@ public class Main {
     Vertex end = graph.findVertex(endNodeUid);
     List<Vertex> route = router.findShortestPath(graph, start, end);
 
-    System.out.printf(String.format("Route found traversing %d nodes", route.size()));
+    System.out.printf(String.format("Route found traversing %d nodes\n", route.size()));
+    // TODO: Condense by removing duplicate names. Also side streets are mentioned for no reason,
+    // probable because the
+    //  node is in both ways with that label. We should consider the name labels as a set, and
+    // ignore sets the have the
+    //  road we are currently on.
+    for (Vertex vertex : route) {
+      try {
+        String name = graph.findLabel(vertex);
+        System.out.printf(String.format("  %s\n", name));
+      } catch (RuntimeException ignored) {
+      }
+    }
+
+    double lengthMeters = 0.0;
+    for (int i = 1; i < route.size(); i++) {
+      lengthMeters += route.get(i - 1).calculateDistanceToNode(route.get(i));
+    }
+    System.out.printf(String.format("Route is of length %f meters\n", lengthMeters));
   }
 }
