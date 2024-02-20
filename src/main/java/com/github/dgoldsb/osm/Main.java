@@ -35,7 +35,7 @@ public class Main {
     // Run the router.
     ShortestPathRouter router = new ShortestPathRouter();
     Vertex start = graph.findVertex(startNodeUid);
-    Vertex end = graph.findVertex(startNodeUid);
+    Vertex end = graph.findVertex(endNodeUid);
     List<Vertex> route = router.findShortestPath(graph, start, end);
 
     System.out.printf(String.format("Route found traversing %d nodes", route.size()));
