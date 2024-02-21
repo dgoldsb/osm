@@ -9,7 +9,6 @@ public record Graph(
     HashMap<Long, Vertex> uidVertexMap,
     HashMap<Vertex, HashSet<Vertex>> neighbourMap,
     HashMap<Pair<Vertex>, String> labelMap) {
-
   /**
    * Instantiate a graph from OSM nodes and ways.
    *
@@ -29,10 +28,15 @@ public record Graph(
 
     // Populate the neighbours by exploring all ways.
     HashMap<Vertex, HashSet<Vertex>> neighbourMap = new HashMap<>();
+    // Also track which vertices were part of a way, we will drop those that are not.
+    HashSet<Long> encounteredVertices = new HashSet<>();
     for (Way way : osm.getWays()) {
       for (int i = 0; i < way.getNds().size() - 1; i += 1) {
         Vertex firstVertex = uidVertexMap.get(way.getNds().get(i).getRef());
         Vertex secondVertex = uidVertexMap.get(way.getNds().get(i + 1).getRef());
+
+        encounteredVertices.add(firstVertex.uid());
+        encounteredVertices.add(secondVertex.uid());
 
         neighbourMap.putIfAbsent(firstVertex, new HashSet<>());
         neighbourMap.putIfAbsent(secondVertex, new HashSet<>());
@@ -42,8 +46,7 @@ public record Graph(
       }
     }
 
-    // Quick and dirty extraction of names of ways, we do not consider the edge case of nodes that
-    // are in multiple ways.
+    // Quick and dirty extraction of names of ways.
     HashMap<Pair<Vertex>, String> labelMap = new HashMap<>();
     for (Way way : osm.getWays()) {
       if (way.getTags() == null) {
@@ -67,7 +70,19 @@ public record Graph(
       }
     }
 
-    return new Graph(uidVertexMap, neighbourMap, labelMap);
+    // Turn our temporary map into a minimal node register with referential integrity with the
+    // edges.
+    HashMap<Long, Vertex> encounterUidVertexMap =
+        uidVertexMap.entrySet().stream()
+            .filter(e -> encounteredVertices.contains(e.getKey()))
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (existingValue, newValue) -> existingValue,
+                    HashMap::new));
+
+    return new Graph(encounterUidVertexMap, neighbourMap, labelMap);
   }
 
   public Vertex findVertex(Long id) throws RuntimeException {
