@@ -9,6 +9,7 @@ import com.github.dgoldsb.osm.routing.Vertex;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,13 +40,20 @@ public class Main {
     Vertex end = graph.findVertex(endNodeUid);
     List<Vertex> route = router.findShortestPath(graph, start, end);
 
+    // TODO: Move to separate method/class.
     System.out.printf(String.format("Route found traversing %d nodes\n", route.size()));
     List<String> labeledRoute = new ArrayList<>();
+    HashMap<String, Double> distanceOnLabel = new HashMap<>();
     for (int i = 0; i < route.size() - 1; i += 1) {
       Vertex firstVertex = route.get(i);
       Vertex secondVertex = route.get(i + 1);
       try {
         String name = graph.findLabel(firstVertex, secondVertex);
+        distanceOnLabel.putIfAbsent(name, 0.0);
+        double cumulativeDistance =
+            distanceOnLabel.getOrDefault(name, 0.0)
+                + firstVertex.calculateDistanceToNode(secondVertex);
+        distanceOnLabel.put(name, cumulativeDistance);
         if (labeledRoute.isEmpty() || !name.equals(labeledRoute.getLast())) {
           labeledRoute.add(name);
         }
@@ -54,7 +62,11 @@ public class Main {
     }
 
     for (String label : labeledRoute) {
-      System.out.printf(String.format("  %s\n", label));
+      // Heuristic: sometimes a street not taken briefly enters the shortest path because of node
+      // (mis)placement.
+      if (distanceOnLabel.getOrDefault(label, 0.0) > 10.0) {
+        System.out.printf(String.format("  %s\n", label));
+      }
     }
 
     double lengthMeters = 0.0;
