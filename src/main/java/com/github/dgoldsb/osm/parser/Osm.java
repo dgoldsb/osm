@@ -34,6 +34,9 @@ public class Osm {
   @JacksonXmlProperty(isAttribute = true)
   private String license;
 
+  @JacksonXmlProperty(isAttribute = true)
+  private String timestamp;
+
   public List<Node> getNodes() {
     return nodes;
   }
@@ -104,5 +107,13 @@ public class Osm {
 
   public void setBounds(Bounds bounds) {
     this.bounds = bounds;
+  }
+
+  public String getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(String timestamp) {
+    this.timestamp = timestamp;
   }
 }
