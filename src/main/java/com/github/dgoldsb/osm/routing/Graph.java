@@ -9,6 +9,34 @@ public record Graph(
     HashMap<Long, Vertex> uidVertexMap,
     HashMap<Vertex, HashSet<Vertex>> neighbourMap,
     HashMap<Pair<Vertex>, String> labelMap) {
+
+  /**
+   * Returns true if we are interested in this way, false otherwise. We are interested in ways that
+   * are traversable by car.
+   *
+   * @param way way under consideration
+   * @return boolean result
+   */
+  public static Boolean isValidWay(Way way) {
+    if (way.getTags() == null) {
+      return false;
+    }
+
+    Optional<Tag> highwayTagOptional =
+        way.getTags().stream().filter(t -> Objects.equals(t.getK(), "highway")).findFirst();
+
+    if (highwayTagOptional.isEmpty()) {
+      return false;
+    }
+
+    try {
+      CarHighWayType.valueOf(highwayTagOptional.get().getV().toUpperCase());
+      return true;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
+  }
+
   /**
    * Instantiate a graph from OSM nodes and ways.
    *
@@ -31,6 +59,10 @@ public record Graph(
     // Also track which vertices were part of a way, we will drop those that are not.
     HashSet<Long> encounteredVertices = new HashSet<>();
     for (Way way : osm.getWays()) {
+      if (!Graph.isValidWay(way)) {
+        continue;
+      }
+
       for (int i = 0; i < way.getNds().size() - 1; i += 1) {
         Vertex firstVertex = uidVertexMap.get(way.getNds().get(i).getRef());
         Vertex secondVertex = uidVertexMap.get(way.getNds().get(i + 1).getRef());
@@ -49,7 +81,7 @@ public record Graph(
     // Quick and dirty extraction of names of ways.
     HashMap<Pair<Vertex>, String> labelMap = new HashMap<>();
     for (Way way : osm.getWays()) {
-      if (way.getTags() == null) {
+      if (!Graph.isValidWay(way)) {
         continue;
       }
 
