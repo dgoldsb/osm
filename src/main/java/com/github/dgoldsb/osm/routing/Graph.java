@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public record Graph(
     HashMap<Long, Vertex> uidVertexMap,
     HashMap<Vertex, HashSet<Vertex>> neighbourMap,
-    HashMap<Vertex, String> labelMap) {
+    HashMap<Pair<Vertex>, String> labelMap) {
 
   /**
    * Instantiate a graph from OSM nodes and ways.
@@ -44,7 +44,7 @@ public record Graph(
 
     // Quick and dirty extraction of names of ways, we do not consider the edge case of nodes that
     // are in multiple ways.
-    HashMap<Vertex, String> labelMap = new HashMap<>();
+    HashMap<Pair<Vertex>, String> labelMap = new HashMap<>();
     for (Way way : osm.getWays()) {
       if (way.getTags() == null) {
         continue;
@@ -54,10 +54,14 @@ public record Graph(
           way.getTags().stream().filter(t -> Objects.equals(t.getK(), "name")).findFirst();
 
       if (labelTagOptional.isPresent()) {
-        for (Nd nd : way.getNds()) {
-          Vertex vertex = uidVertexMap.get(nd.getRef());
-          if (vertex != null) {
-            labelMap.put(vertex, labelTagOptional.get().getV());
+        for (int i = 0; i < way.getNds().size() - 1; i += 1) {
+          Vertex firstVertex = uidVertexMap.get(way.getNds().get(i).getRef());
+          Vertex secondVertex = uidVertexMap.get(way.getNds().get(i + 1).getRef());
+          if (firstVertex != null && secondVertex != null) {
+            labelMap.put(
+                new Pair<Vertex>(firstVertex, secondVertex), labelTagOptional.get().getV());
+            labelMap.put(
+                new Pair<Vertex>(secondVertex, firstVertex), labelTagOptional.get().getV());
           }
         }
       }
@@ -73,10 +77,11 @@ public record Graph(
     return this.uidVertexMap.get(id);
   }
 
-  public String findLabel(Vertex vertex) throws RuntimeException {
-    if (!this.labelMap.containsKey(vertex)) {
-      throw new RuntimeException(String.format("Vertex %s not known in map!", vertex));
+  public String findLabel(Vertex firstVertex, Vertex secondVertex) throws RuntimeException {
+    Pair<Vertex> pair = new Pair<Vertex>(firstVertex, secondVertex);
+    if (!this.labelMap.containsKey(pair)) {
+      throw new RuntimeException(String.format("Edge %s not known in map!", pair));
     }
-    return this.labelMap.get(vertex);
+    return this.labelMap.get(pair);
   }
 }

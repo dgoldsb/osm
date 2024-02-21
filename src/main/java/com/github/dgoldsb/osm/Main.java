@@ -8,6 +8,7 @@ import com.github.dgoldsb.osm.routing.ShortestPathRouter;
 import com.github.dgoldsb.osm.routing.Vertex;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,17 +40,21 @@ public class Main {
     List<Vertex> route = router.findShortestPath(graph, start, end);
 
     System.out.printf(String.format("Route found traversing %d nodes\n", route.size()));
-    // TODO: Condense by removing duplicate names. Also side streets are mentioned for no reason,
-    // probable because the
-    //  node is in both ways with that label. We should consider the name labels as a set, and
-    // ignore sets the have the
-    //  road we are currently on.
-    for (Vertex vertex : route) {
+    List<String> labeledRoute = new ArrayList<>();
+    for (int i = 0; i < route.size() - 1; i += 1) {
+      Vertex firstVertex = route.get(i);
+      Vertex secondVertex = route.get(i + 1);
       try {
-        String name = graph.findLabel(vertex);
-        System.out.printf(String.format("  %s\n", name));
+        String name = graph.findLabel(firstVertex, secondVertex);
+        if (labeledRoute.isEmpty() || !name.equals(labeledRoute.getLast())) {
+          labeledRoute.add(name);
+        }
       } catch (RuntimeException ignored) {
       }
+    }
+
+    for (String label : labeledRoute) {
+      System.out.printf(String.format("  %s\n", label));
     }
 
     double lengthMeters = 0.0;
