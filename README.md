@@ -20,7 +20,6 @@ Some thoughts one interesting concerns.
 
 - Filter out ways that are not traversable by the modes we care about.
 - Remove nodes not part of any edges to reduce memory footprint.
-- Double-check file is no longer in memory after loading.
 - Split a `RoutePresenter` class out of the main.
 - Find start and end node by street name.
 - Traversability of ways per mode of transport. Easiest is to assume any way is valid, but we should separate this concern in a neat way later.

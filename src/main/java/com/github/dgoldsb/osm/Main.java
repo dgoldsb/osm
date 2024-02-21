@@ -14,19 +14,37 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+  /**
+   * Loads an `.osm` file into memory and parses an OSM out of it.
+   *
+   * @param mapName name of the map file, without `.osm`
+   * @return a deserialized OSM object.
+   * @throws IOException file could not be read or parsed
+   */
+  private static Osm loadMap(String mapName) throws IOException {
+    File xmlFile = new File(String.format("src/main/resources/maps/%s.osm", mapName));
+    XmlMapper xmlMapper = new XmlMapper();
+    XmlParser xmlParser = new XmlParser(xmlMapper);
+    return xmlParser.parse(xmlFile);
+  }
+
+  /**
+   * Load a graph from an `.osm` file.
+   *
+   * @param mapName name of the map file, without `.osm`
+   * @return a graph object
+   * @throws IOException file could not be read or parsed
+   */
+  private static Graph loadGraph(String mapName) throws IOException {
+    return Graph.fromOsm(loadMap(mapName));
+  }
+
   public static void main(String[] args) throws IOException {
     // God I last used scanner in university haha.
     Scanner scanner = new Scanner(System.in);
 
-    // Parse the OSM file.
-    // TODO: Map selection (or something).
-    File xmlFile = new File("src/main/resources/maps/test.osm");
-    XmlMapper xmlMapper = new XmlMapper();
-    XmlParser xmlParser = new XmlParser(xmlMapper);
-    Osm osm = xmlParser.parse(xmlFile);
-
     // Parse the graph from the OSM.
-    Graph graph = Graph.fromOsm(osm);
+    Graph graph = loadGraph("test");
 
     // Request for input to the routin algorithm.
     System.out.print("Enter start node UID: ");
