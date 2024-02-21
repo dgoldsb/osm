@@ -1,5 +1,7 @@
 # README
 
+**Disclaimer**: this is a toy project to play around with open street maps, I am not following all best practices in the interest of spending more time working with the map data.
+
 ## Setup
 
 - Install Java 21, for instance [Corretto JDK](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html).
